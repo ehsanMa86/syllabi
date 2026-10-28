@@ -1,5 +1,5 @@
-// Copyright (c) 2026 Ehsan Madadi. All rights reserved.
-// See LICENSE in the project root.
+// Copyright (c) 2026 Ehsan Madadi
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { h, debounce, fetchJson, downloadBlob, loadScript } from './util.js';
 import { buildDocument, emptyDraft, countPlaceholders, isIncluded, sectionText, sumWeights, parseCourseCode } from './document.js';

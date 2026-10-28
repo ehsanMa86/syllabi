@@ -1,5 +1,5 @@
-# Copyright (c) 2026 Ehsan Madadi. All rights reserved.
-# See LICENSE in the project root.
+# Copyright (c) 2026 Ehsan Madadi
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Validate the syllabus content and build the static site.
 
     python scripts/build.py            # validate and build into dist/

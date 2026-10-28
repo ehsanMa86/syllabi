@@ -1,5 +1,5 @@
-// Copyright (c) 2026 Ehsan Madadi. All rights reserved.
-// See LICENSE in the project root.
+// Copyright (c) 2026 Ehsan Madadi
+// SPDX-License-Identifier: GPL-3.0-or-later
 //
 // Turns the merged policy sections plus the instructor's draft into a document model
 // that both renderers (HTML preview/PDF and Word) understand:

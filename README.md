@@ -72,4 +72,8 @@ python scripts/new_semester.py 2027-fall    # same as the rollover workflow
 
 ## License
 
-Copyright (c) 2026 Ehsan Madadi. See [LICENSE](LICENSE). Policy statements in `content/` are CSULB, college and department text and are not covered by this copyright.
+Copyright (c) 2026 Ehsan Madadi.
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See [LICENSE](LICENSE) for details.
+
+Policy statements in `content/` are CSULB, college and department text and are not covered by this copyright. The bundled docx library keeps its own MIT license (`site/vendor/docx/LICENSE`).

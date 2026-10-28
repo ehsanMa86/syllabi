@@ -1,5 +1,5 @@
-// Copyright (c) 2026 Ehsan Madadi. All rights reserved.
-// See LICENSE in the project root.
+// Copyright (c) 2026 Ehsan Madadi
+// SPDX-License-Identifier: GPL-3.0-or-later
 //
 // A small Markdown subset shared by policy content and instructor text:
 //   paragraphs (one per line), "- " bullets, "1. " numbered items, "### " subheadings,

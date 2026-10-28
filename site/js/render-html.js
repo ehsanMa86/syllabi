@@ -1,5 +1,5 @@
-// Copyright (c) 2026 Ehsan Madadi. All rights reserved.
-// See LICENSE in the project root.
+// Copyright (c) 2026 Ehsan Madadi
+// SPDX-License-Identifier: GPL-3.0-or-later
 //
 // Renders the document model as semantic HTML for the live preview and for printing to PDF.
 

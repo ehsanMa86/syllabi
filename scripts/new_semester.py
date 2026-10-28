@@ -1,5 +1,5 @@
-# Copyright (c) 2026 Ehsan Madadi. All rights reserved.
-# See LICENSE in the project root.
+# Copyright (c) 2026 Ehsan Madadi
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Start a new semester by copying the most recent semester's content.
 
     python scripts/new_semester.py 2027-fall

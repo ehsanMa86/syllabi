@@ -1,5 +1,5 @@
-// Copyright (c) 2026 Ehsan Madadi. All rights reserved.
-// See LICENSE in the project root.
+// Copyright (c) 2026 Ehsan Madadi
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 /** Create an element: h('button', { class: 'x', onclick: fn }, 'Label', childNode). */
 export function h(tag, attrs = {}, ...children) {

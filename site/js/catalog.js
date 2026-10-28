@@ -1,5 +1,5 @@
-// Copyright (c) 2026 Ehsan Madadi. All rights reserved.
-// See LICENSE in the project root.
+// Copyright (c) 2026 Ehsan Madadi
+// SPDX-License-Identifier: GPL-3.0-or-later
 //
 // Course lookup against the catalog snapshot published with the site
 // (data/catalog/index.json plus one file per course prefix, built from catalog/courses.csv).

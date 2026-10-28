@@ -1,5 +1,5 @@
-# Copyright (c) 2026 Ehsan Madadi. All rights reserved.
-# See LICENSE in the project root.
+# Copyright (c) 2026 Ehsan Madadi
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Refresh catalog/courses.csv from the CSULB catalog through the Acalog API.
 
 The CSULB catalog (catalog.csulb.edu) runs on Acalog. Its public web pages are protected

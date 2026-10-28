@@ -1,5 +1,5 @@
-// Copyright (c) 2026 Ehsan Madadi. All rights reserved.
-// See LICENSE in the project root.
+// Copyright (c) 2026 Ehsan Madadi
+// SPDX-License-Identifier: GPL-3.0-or-later
 //
 // Drafts are kept in the browser (autosave) and can be saved to / opened from a .json file
 // so a syllabus can be reused next semester or on another computer.
