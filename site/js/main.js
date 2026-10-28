@@ -8,13 +8,14 @@ import { parseInline } from './markdown.js';
 import { docxBlob } from './render-docx.js';
 import { sectionCard, customSectionsCard } from './editors.js';
 import { loadDraft, saveDraft, clearDraft, draftFile, readDraftFile } from './store.js';
-import { lookupCourse, catalogIndex } from './catalog.js';
+import { lookupCourse, catalogIndex, catalogSearchUrl, parseCatalogText } from './catalog.js';
 
 const app = {
   semesters: [],
   index: null, // current semester index.json
   sections: [],
   draft: null,
+  catalog: { prefixes: [], count: 0 }, // data/catalog/index.json
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -115,11 +116,49 @@ function renderSetup() {
   const college = currentCollege();
   const course = d.course;
 
+  const hasCatalog = app.catalog.count > 0;
   const lookupStatus = h('p', { class: 'hint', id: 'lookup-status', 'aria-live': 'polite' });
+  const openLink = h('a', { class: 'button-link', target: '_blank', rel: 'noopener',
+    href: catalogSearchUrl(course.code, app.catalog.catalogId) }, 'Open in catalog', h('span', { class: 'sr-only' }, ' (opens a new tab)'));
   const codeInput = h('input', { id: 'in-code', type: 'text', value: course.code || '', placeholder: 'e.g. ENGR 102',
     'aria-describedby': 'lookup-status', autocomplete: 'off',
-    oninput: (e) => { course.code = e.target.value; changed(); },
-    onkeydown: (e) => { if (e.key === 'Enter') { e.preventDefault(); doLookup(); } } });
+    oninput: (e) => {
+      course.code = e.target.value;
+      openLink.href = catalogSearchUrl(course.code, app.catalog.catalogId);
+      changed();
+    },
+    onkeydown: (e) => { if (e.key === 'Enter' && hasCatalog) { e.preventDefault(); doLookup(); } } });
+
+  const pasteBox = h('textarea', { id: 'in-paste', rows: 5,
+    placeholder: 'Paste the course entry here: from the course number and title through the end of its description.' });
+  const pasteStatus = h('p', { class: 'hint', 'aria-live': 'polite' });
+  async function fillFromPaste() {
+    const { code, course: found } = parseCatalogText(pasteBox.value);
+    if (!code) {
+      pasteStatus.textContent = 'The course number and title were not found. Copy the entry starting at the line with the course number and title (e.g. "ENGR 102 - Academic Success Skills").';
+      return;
+    }
+    const filled = [];
+    if (code) {
+      const typed = parseCourseCode(course.code);
+      if (!typed || typed.prefix !== code.prefix || typed.number !== code.number) filled.push('course number');
+      course.code = `${code.prefix} ${code.number}`;
+      autoSelectDepartment(code.prefix);
+    }
+    const names = { title: 'title', units: 'units', description: 'description', prerequisites: 'prerequisites', ge: 'GE category' };
+    for (const key of Object.keys(names)) {
+      if (found[key]) {
+        course[key] = found[key];
+        filled.push(names[key]);
+      }
+    }
+    saveDraft(d);
+    await reload();
+    const missing = Object.keys(names).filter((k) => !found[k] && k !== 'ge').map((k) => names[k]);
+    $('#lookup-status').textContent = `Filled in: ${filled.join(', ')}.`
+      + (missing.length ? ` Not found in the pasted text: ${missing.join(', ')}; please type ${missing.length === 1 ? 'it' : 'them'}.` : '')
+      + ' Please check the details.';
+  }
 
   async function doLookup() {
     lookupStatus.textContent = 'Looking up…';
@@ -182,8 +221,18 @@ function renderSetup() {
       : null,
     h('div', { class: 'lookup' },
       h('div', { class: 'field' }, h('label', { for: 'in-code' }, 'Course'), codeInput),
-      h('button', { type: 'button', onclick: doLookup }, 'Look up in catalog')),
+      hasCatalog ? h('button', { type: 'button', onclick: doLookup }, 'Look up') : null,
+      openLink),
     lookupStatus,
+    h('details', { class: 'paste', open: !course.title && !course.description },
+      h('summary', {}, 'Fill in from the online catalog'),
+      h('ol', { class: 'steps' },
+        h('li', {}, 'Type the course above and click ', h('strong', {}, 'Open in catalog'), '.'),
+        h('li', {}, 'On the catalog page, open the course and select its entry, from the course number and title through the end of the description. Copy it.'),
+        h('li', {}, 'Paste it below and click ', h('strong', {}, 'Fill in course details'), '.')),
+      h('div', { class: 'field' }, h('label', { for: 'in-paste' }, 'Copied catalog entry'), pasteBox),
+      h('button', { type: 'button', onclick: fillFromPaste }, 'Fill in course details'),
+      pasteStatus),
     input('Course title', course, 'title'),
     h('div', { class: 'grid3' },
       input('Units', course, 'units', { inputmode: 'decimal' }),
@@ -407,6 +456,7 @@ async function init() {
     console.error(e);
     return;
   }
+  app.catalog = await catalogIndex();
   app.draft = loadDraft() || emptyDraft();
   if (!app.semesters.some((s) => s.id === app.draft.semester)) app.draft.semester = app.semesters[0].id;
   await loadSemester(app.draft.semester);

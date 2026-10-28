@@ -35,12 +35,15 @@ Faculty see a list of policy changes since the previous semester for their colle
 
 ## Course catalog
 
-The catalog at catalog.csulb.edu runs on Acalog, and its pages block automated downloads. The site therefore reads its own copy in [catalog/courses.csv](catalog/README.md). There are two ways to fill it:
+The catalog at catalog.csulb.edu runs on Acalog, and its pages block automated downloads. Course details therefore come from the instructor's own browser:
 
-- **Acalog API (recommended):** ask the CSULB catalog office for an Acalog API key. Add it as the repository secret `ACALOG_API_KEY`, and set the repository variables `ACALOG_CATALOG_ID` (`12` is the 2026-2027 catalog) and `ACALOG_CATALOG_NAME`. The **Update course catalog** workflow then refreshes the CSV monthly and opens a pull request.
-- **An export:** any spreadsheet from the catalog office, saved as CSV with the same columns.
+1. **Open in catalog** opens the catalog search for the course in a new tab.
+2. The instructor copies the course entry and pastes it into **Fill in from the online catalog**.
+3. The site fills in the title, units, prerequisites, GE category and description, and reports anything it could not find.
 
-Until the CSV has courses, faculty type the course details themselves; the lookup says so.
+This works for every course and needs no catalog data in the repository.
+
+Optionally, the site can also keep its own copy in [catalog/courses.csv](catalog/README.md). When that file has courses, a **Look up** button appears next to the course field and fills in details in one click. It can be filled from an export, or from the Acalog API if a key is ever available (secret `ACALOG_API_KEY`, variable `ACALOG_CATALOG_ID`; the **Update course catalog** workflow then refreshes it monthly).
 
 Student learning outcomes are not in the catalog. They come from each course's Standard Course Outline, which faculty enter.
 

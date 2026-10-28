@@ -1,0 +1,70 @@
+<!doctype html>
+<!-- Copyright (c) 2026 Ehsan Madadi. SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Checks parseCatalogText on text shaped like entries copied from the online catalog.
+     Run with: python tests/run_browser_tests.py -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Catalog paste parser</title></head>
+<body>
+<pre id="out">running</pre>
+<script type="module">
+import { parseCatalogText, catalogSearchUrl } from '../../dist/js/catalog.js';
+
+const cases = [
+  {
+    name: 'entry with labeled lines and page furniture',
+    text: `Add to Portfolio (opens a new window)
+ENGR 102 - Academic Success Skills
+Units: 1
+Prerequisite: None.
+Strategies that enhance study skills so students succeed in all courses.
+Letter grade only (A-F).
+Print-Friendly Page (opens a new window)
+Back to Top`,
+    expect: { code: 'ENGR 102', title: 'Academic Success Skills', units: '1', prerequisites: 'None',
+      description: 'Strategies that enhance study skills so students succeed in all courses. Letter grade only (A-F).' },
+  },
+  {
+    name: 'units in the title and prerequisite sharing a line with the description',
+    text: `crju 101 – Introduction to Criminal Justice (3)
+Prerequisite: ENGR 101 or MATH 113. Survey of the criminal justice system.
+
+General Education Category: D`,
+    expect: { code: 'CRJU 101', title: 'Introduction to Criminal Justice', units: '3',
+      prerequisites: 'ENGR 101 or MATH 113', description: 'Survey of the criminal justice system.', ge: 'D' },
+  },
+  {
+    name: 'units written as a phrase, variable units',
+    text: `BIOL 499H - Directed Research
+1-3 units
+Prerequisites: Consent of instructor.
+Corequisite: BIOL 498.
+Independent research.`,
+    expect: { code: 'BIOL 499H', title: 'Directed Research', units: '1-3',
+      prerequisites: 'Consent of instructor; BIOL 498', description: 'Independent research.' },
+  },
+  {
+    name: 'text without a course header',
+    text: 'Some notes that are not a catalog entry.',
+    expect: { code: null },
+  },
+];
+
+const out = [];
+let failed = 0;
+for (const c of cases) {
+  const { code, course } = parseCatalogText(c.text);
+  const got = { code: code ? `${code.prefix} ${code.number}` : null, ...course };
+  const problems = Object.entries(c.expect).filter(([k, v]) => got[k] !== v)
+    .map(([k, v]) => `${k}: expected ${JSON.stringify(v)}, got ${JSON.stringify(got[k])}`);
+  if (problems.length) failed++;
+  out.push(`${problems.length ? 'FAIL' : 'pass'} ${c.name}${problems.map((p) => `\n    ${p}`).join('')}`);
+}
+const url = catalogSearchUrl('engr102', '12');
+const urlOk = url.startsWith('https://catalog.csulb.edu/search_advanced.php?') && url.includes('ENGR+102') && url.includes('cur_cat_oid=12');
+if (!urlOk) failed++;
+out.push(`${urlOk ? 'pass' : 'FAIL'} catalog search link ${url}`);
+out.push(failed ? `${failed} failed` : 'OK');
+document.getElementById('out').textContent = out.join('\n');
+</script>
+</body>
+</html>

@@ -120,6 +120,11 @@ def main() -> int:
             for p in problems:
                 print(f"  docx problem: {p}")
             failures += bool(problems)
+
+        out = pre(dump_dom(browser, f"http://127.0.0.1:{port}/tests/js/catalog-parse.html"), "out")
+        ok = out.strip().endswith("OK")
+        print(f"[catalog paste] {'pass' if ok else 'FAIL'}\n  " + out.replace("\n", "\n  "))
+        failures += not ok
     finally:
         httpd.shutdown()
     print("all browser tests passed" if not failures else f"{failures} failure(s)")

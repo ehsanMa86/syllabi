@@ -163,6 +163,18 @@ input:hover, select:hover, textarea:hover { border-color: #8d9095; }
 .lookup .field { flex: 1; min-width: 0; margin-bottom: 4px; }
 .lookup button { margin-bottom: 4px; white-space: nowrap; }
 #lookup-status { min-height: 1.2em; margin-bottom: 10px; }
+.button-link {
+  display: inline-block; margin-bottom: 4px; padding: 7px 14px; border-radius: 8px; white-space: nowrap;
+  border: 1px solid var(--line-strong); background: var(--card); color: var(--ink);
+  font-weight: 600; font-size: 14px; text-decoration: none;
+}
+.button-link::after { content: " ↗"; }
+.button-link:hover { border-color: var(--ink); }
+details.paste { margin: 0 0 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fafaf8; }
+details.paste summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+details.paste[open] summary { margin-bottom: 8px; }
+.steps { margin: 0 0 10px; padding-left: 20px; font-size: 13.5px; color: var(--muted); }
+.steps li { margin: 2px 0; }
 
 .note { font-size: 13.5px; background: #f7f7f5; border-left: 3px solid var(--gold); padding: 8px 12px; margin: 10px 0 0; border-radius: 0 6px 6px 0; }
 .note p { margin: 0 0 4px; }

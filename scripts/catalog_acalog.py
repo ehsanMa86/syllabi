@@ -53,12 +53,19 @@ def api_get(base: str, path: str, params: list[tuple[str, str]], retries: int = 
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "csulb-syllabus-builder catalog import"})
             with urllib.request.urlopen(req, timeout=60) as res:
-                return res.read()
+                body = res.read()
+            break
         except Exception as e:  # network errors and HTTP errors
             if attempt == retries - 1:
                 raise RuntimeError(f"Acalog API request failed: {e}") from e
             time.sleep(2 * (attempt + 1))
-    raise AssertionError("unreachable")
+    # Errors come back as <catalog><message>...</message><status>failure</status></catalog>.
+    root = ET.fromstring(body)
+    status = next((el.text for el in root.iter() if local(el.tag) == "status"), None)
+    if status and status.strip().lower() == "failure":
+        message = next((el.text for el in root.iter() if local(el.tag) == "message"), "unknown error")
+        raise SystemExit(f"Acalog API error: {message.strip()}")
+    return body
 
 
 def local(tag: str) -> str:
