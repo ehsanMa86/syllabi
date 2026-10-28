@@ -121,7 +121,11 @@ const EDITORS = {
   },
 
   text(s, draft, ctx) {
-    return [ownText(draft, s, ctx, 'Your text', { rows: 5, placeholder: s.prompt || '' })];
+    if (!s.body.trim()) return [ownText(draft, s, ctx, 'Your text', { rows: 5, placeholder: s.prompt || '' })];
+    return [
+      h('details', { class: 'provided' }, h('summary', {}, 'Read the provided text'), prose(s.body)),
+      ownText(draft, s, ctx, 'Your additions (optional)', { rows: 3, placeholder: s.prompt || '' }),
+    ];
   },
 
   modality(s, draft, ctx) {

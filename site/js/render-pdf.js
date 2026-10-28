@@ -112,7 +112,7 @@ export function buildPdf(PDFDocument, fonts, doc) {
   const heading = (b, next) => {
     const style = HEADINGS[b.level] || HEADINGS[3];
     // Keep the heading with at least the start of what follows it.
-    const follow = next && next.t === 'table' ? 60 : 40;
+    const follow = !next ? 0 : next.t === 'h' ? 80 : next.t === 'table' ? 60 : 40;
     pdf.y += style.before;
     if (pdf.y + style.size * 1.5 + follow > bottom()) pdf.addPage();
     root.add(pdf.struct(style.tag, () => writeRuns(b.runs, { size: style.size, bold: true })));

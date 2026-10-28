@@ -306,7 +306,7 @@ function checklist(doc) {
   if (byField('schedule')) need(d.schedule.some((r) => filled(r.topic)), 'Add the course schedule', target('schedule'));
   for (const s of app.sections) {
     if (s.kind !== 'section' || !isIncluded(s, d)) continue;
-    if (s.field === 'text' && !filled(d.sections[s.id]?.text)) need(false, `Complete "${s.title.split(':')[0]}"`, s.id);
+    if (s.field === 'text' && !filled(s.body) && !filled(d.sections[s.id]?.text)) need(false, `Complete "${s.title.split(':')[0]}"`, s.id);
     if (s.field === 'none' && s.lock !== 'required') {
       const text = sectionText(s, d);
       if (/\[(Add|Insert|Provide)[^\]]*\]|\bX%/.test(text)) need(false, `Fill in the placeholder in "${s.title.split(':')[0]}"`, s.id);
