@@ -241,10 +241,6 @@ details.provided summary { cursor: pointer; font-weight: 600; font-size: 14px; c
 .toast.show { transform: translate(-50%, 0); visibility: visible; transition: transform .25s ease; }
 .toast[data-kind="error"] { background: var(--danger); }
 
-dialog { border: 0; border-radius: 12px; padding: 20px 22px; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
-dialog::backdrop { background: rgba(0,0,0,.45); }
-dialog h2 { margin: 0 0 8px; font-size: 18px; }
-.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
 
 /* ---------------------------------------------------------------- the document */
 
@@ -275,7 +271,7 @@ dialog h2 { margin: 0 0 8px; font-size: 18px; }
 @page { size: letter; margin: 0.75in 0.85in; }
 @media print {
   body { background: #fff; }
-  .topbar, .pane-switch, .form-pane, .toast, .skip, dialog { display: none !important; }
+  .topbar, .pane-switch, .form-pane, .toast, .skip { display: none !important; }
   .layout { display: block; height: auto; }
   .preview-pane { display: block !important; overflow: visible; padding: 0; background: #fff; }
   .paper { box-shadow: none; padding: 0; max-width: none; }

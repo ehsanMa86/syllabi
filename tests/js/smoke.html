@@ -7,11 +7,14 @@
 <body>
 <pre id="out">running</pre>
 <pre id="docx"></pre>
+<pre id="pdf"></pre>
 <script src="../../dist/vendor/docx/docx.iife.js"></script>
+<script src="../../dist/vendor/pdfkit/pdfkit.standalone.js"></script>
 <script type="module">
 import { buildDocument, emptyDraft, countPlaceholders } from '../../dist/js/document.js';
 import { renderHtml } from '../../dist/js/render-html.js';
 import { buildDocx } from '../../dist/js/render-docx.js';
+import { buildPdf, loadPdfFonts } from '../../dist/js/render-pdf.js';
 
 const out = document.getElementById('out');
 const log = [];
@@ -53,6 +56,12 @@ try {
   const b64 = await docx.Packer.toBase64String(buildDocx(docx, doc));
   document.getElementById('docx').textContent = b64;
   log.push(`docxBase64Length=${b64.length}`);
+  const pdfBlob = await buildPdf(PDFDocument, await loadPdfFonts('../../dist/vendor/fonts/'), doc);
+  const bytes = new Uint8Array(await pdfBlob.arrayBuffer());
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  document.getElementById('pdf').textContent = btoa(bin);
+  log.push(`pdfBytes=${bytes.length}`);
   log.push('OK');
 } catch (e) {
   log.push(`ERROR ${e && e.stack || e}`);

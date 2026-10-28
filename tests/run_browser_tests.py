@@ -95,6 +95,39 @@ def check_docx(data: bytes, keep: Path | None) -> list[str]:
     return problems
 
 
+def check_pdf(data: bytes, keep: Path | None, title: str) -> list[str]:
+    import pymupdf as fitz
+
+    if keep:
+        keep.write_bytes(data)
+    d = fitz.open(stream=data, filetype="pdf")
+    problems = []
+    if d.page_count < 3:
+        problems.append(f"only {d.page_count} page(s)")
+    catalog = d.pdf_catalog()
+    if d.xref_get_key(catalog, "StructTreeRoot")[0] == "null":
+        problems.append("not tagged (no StructTreeRoot)")
+    if "true" not in d.xref_get_key(catalog, "MarkInfo")[1] and \
+            d.xref_get_key(catalog, "MarkInfo/Marked")[1] != "true":
+        problems.append("MarkInfo/Marked is not true")
+    if "en" not in d.xref_get_key(catalog, "Lang")[1]:
+        problems.append("document language not set")
+    if d.metadata.get("title") != title:
+        problems.append(f"title property is {d.metadata.get('title')!r}")
+    fonts = {f[3] for p in d for f in p.get_fonts()}
+    if not any("Carlito" in f for f in fonts):
+        problems.append(f"Carlito not embedded (fonts: {sorted(fonts)})")
+    first = d[0].get_text()
+    if title.split(":")[0] not in first:
+        problems.append("title text missing on page 1")
+    last = d[-1].get_text()
+    if f"Page {d.page_count} of {d.page_count}" not in last:
+        problems.append("page number footer missing")
+    if not any(p.get_links() for p in d):
+        problems.append("no clickable links")
+    return problems
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--browser")
@@ -119,6 +152,12 @@ def main() -> int:
             problems = check_docx(base64.b64decode(b64), keep)
             for p in problems:
                 print(f"  docx problem: {p}")
+            failures += bool(problems)
+            title = re.search(r"title=(.*)", out).group(1).strip()
+            keep_pdf = keep.with_suffix(".pdf") if keep else None
+            problems = check_pdf(base64.b64decode(pre(dom, "pdf").strip()), keep_pdf, title)
+            for p in problems:
+                print(f"  pdf problem: {p}")
             failures += bool(problems)
 
         out = pre(dump_dom(browser, f"http://127.0.0.1:{port}/tests/js/catalog-parse.html"), "out")

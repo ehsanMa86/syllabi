@@ -23,7 +23,7 @@
     <nav class="actions" aria-label="Syllabus actions">
       <button type="button" id="check-count" class="pill" title="Show the checklist">Checklist</button>
       <button type="button" id="btn-docx" class="primary">Download Word</button>
-      <button type="button" id="btn-pdf">Save as PDF</button>
+      <button type="button" id="btn-pdf">Download PDF</button>
       <details class="menu">
         <summary>Draft</summary>
         <div class="menu-panel">
@@ -59,16 +59,6 @@
   </main>
 
   <div id="status" class="toast" role="status" aria-live="polite"></div>
-
-  <dialog id="pdf-dialog" aria-labelledby="pdf-title">
-    <h2 id="pdf-title">Saving as PDF</h2>
-    <p>Your browser's print window opens next. Choose <strong>Save as PDF</strong> as the destination (it may be listed under "Printer" or "Destination").</p>
-    <p>Chrome and Edge create a tagged, accessible PDF. For other browsers, download the Word file and use <strong>File &rarr; Save As &rarr; PDF</strong> in Word instead.</p>
-    <div class="dialog-actions">
-      <button type="button" id="pdf-cancel">Cancel</button>
-      <button type="button" id="pdf-continue" class="primary">Continue</button>
-    </div>
-  </dialog>
 
   <script type="module" src="js/main.js"></script>
 </body>

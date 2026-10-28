@@ -29,9 +29,9 @@ jobs:
       - name: Unit tests
         run: python -m unittest discover -s tests -v
 
-      - name: Browser tests (Word and preview output)
+      - name: Browser tests (preview, Word and PDF output)
         run: |
-          pip install python-docx
+          pip install python-docx pymupdf
           python tests/run_browser_tests.py --browser google-chrome
 
       - name: Upload site

@@ -22,7 +22,7 @@ scripts/build.py                checks the content and builds the site into dist
 2. **Faculty form.** The site shows one card per section, in syllabus order. Each card says whether its text is required as written, editable, optional, or for the instructor to complete. A live preview and a checklist (PS 12-03 weights, office hours, SLOs, and so on) update as the instructor types.
 3. **Output.**
    - **Word:** the .docx is built in the browser with real heading styles, Word lists, repeating table header rows and document properties, so it passes Word's accessibility checker.
-   - **PDF:** uses the browser's print dialog ("Save as PDF"). Chrome and Edge produce a tagged, accessible PDF.
+   - **PDF:** built in the browser with the same layout as the Word file: tagged for screen readers (headings, lists, tables), Carlito font (metric-compatible with Calibri) embedded, table headers repeated on each page, and page numbers.
 4. **Drafts.** Drafts autosave in the browser. **Draft → Save draft file** downloads a .json that can be opened next semester; the new semester's policy text is then used automatically. Personalized sections whose provided text changed since the draft are flagged.
 
 ## Every semester
@@ -64,14 +64,16 @@ python scripts/build.py                     # check content and build dist/
 python -m http.server -d dist 8000          # open http://localhost:8000
 python scripts/build.py --check             # check content only
 python -m unittest discover -s tests -v     # unit tests
-pip install python-docx
-python tests/run_browser_tests.py           # headless Chrome/Edge: preview + Word output
+pip install python-docx pymupdf
+python tests/run_browser_tests.py           # headless Chrome/Edge: preview, Word and PDF output
 python scripts/new_semester.py 2027-fall    # same as the rollover workflow
 ```
 
 ## Third-party code
 
-[docx](https://github.com/dolanmiu/docx) 9.5.1 (MIT license) is included in `site/vendor/docx/` to generate Word files.
+- [docx](https://github.com/dolanmiu/docx) 9.5.1 (MIT license) in `site/vendor/docx/` generates Word files.
+- [PDFKit](https://github.com/foliojs/pdfkit) 0.17.2 (MIT license) in `site/vendor/pdfkit/` generates PDF files.
+- [Carlito](https://github.com/googlefonts/carlito) fonts (SIL Open Font License 1.1) in `site/vendor/fonts/` are embedded in the PDFs.
 
 ## License
 
@@ -79,4 +81,4 @@ Copyright (c) 2026 Ehsan Madadi.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See [LICENSE](LICENSE) for details.
 
-Policy statements in `content/` are CSULB, college and department text and are not covered by this copyright. The bundled docx library keeps its own MIT license (`site/vendor/docx/LICENSE`).
+Policy statements in `content/` are CSULB, college and department text and are not covered by this copyright. The bundled libraries and fonts in `site/vendor/` keep their own licenses.

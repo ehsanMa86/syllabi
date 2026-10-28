@@ -6,6 +6,7 @@ import { buildDocument, emptyDraft, countPlaceholders, isIncluded, sectionText, 
 import { renderHtml, runsHtml } from './render-html.js';
 import { parseInline } from './markdown.js';
 import { docxBlob } from './render-docx.js';
+import { buildPdf, loadPdfFonts } from './render-pdf.js';
 import { sectionCard, customSectionsCard } from './editors.js';
 import { loadDraft, saveDraft, clearDraft, draftFile, readDraftFile } from './store.js';
 import { lookupCourse, catalogIndex, catalogSearchUrl, parseCatalogText } from './catalog.js';
@@ -370,24 +371,24 @@ async function downloadWord() {
   }
 }
 
-function savePdf() {
+async function downloadPdf() {
   if (!app.sections.length) return announce('Choose your college first.', 'error');
-  const dialog = $('#pdf-dialog');
-  renderPreview();
-  if (dialog.dataset.shown !== 'yes' && typeof dialog.showModal === 'function') {
-    dialog.dataset.shown = 'yes';
-    dialog.showModal();
-    return;
+  const button = $('#btn-pdf');
+  button.disabled = true;
+  announce('Creating the PDF…');
+  try {
+    const [, fonts] = await Promise.all([loadScript('vendor/pdfkit/pdfkit.standalone.js'), loadPdfFonts()]);
+    const doc = currentDoc();
+    downloadBlob(await buildPdf(window.PDFDocument, fonts, doc), `${doc.fileName}.pdf`);
+    const left = checklist(doc).length;
+    announce(left ? `PDF downloaded. ${left} checklist item(s) still need attention; placeholders are shown in brackets.`
+      : 'PDF downloaded.');
+  } catch (e) {
+    console.error(e);
+    announce('The PDF could not be created. Please try again, or download the Word file and save it as PDF from Word.', 'error');
+  } finally {
+    button.disabled = false;
   }
-  printNow();
-}
-
-function printNow() {
-  const doc = currentDoc();
-  const original = document.title;
-  document.title = doc.fileName;
-  window.addEventListener('afterprint', () => { document.title = original; }, { once: true });
-  window.print();
 }
 
 function showPane(which) {
@@ -399,9 +400,7 @@ function showPane(which) {
 
 function wireActions() {
   $('#btn-docx').addEventListener('click', downloadWord);
-  $('#btn-pdf').addEventListener('click', savePdf);
-  $('#pdf-continue').addEventListener('click', () => { $('#pdf-dialog').close(); setTimeout(printNow, 50); });
-  $('#pdf-cancel').addEventListener('click', () => $('#pdf-dialog').close());
+  $('#btn-pdf').addEventListener('click', downloadPdf);
   $('#btn-save').addEventListener('click', () => {
     const doc = currentDoc();
     downloadBlob(draftFile(app.draft), `${doc.fileName}_draft.json`);
