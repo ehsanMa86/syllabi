@@ -1,0 +1,12 @@
+Copyright (c) 2026 Ehsan Madadi. All rights reserved.
+
+The source code, scripts, styles and documentation in this repository are the work of
+Ehsan Madadi. No permission is granted to copy, modify, or distribute them except as
+expressly authorized by the copyright holder.
+
+Not covered by this notice:
+
+- Policy statements in content/ are text from California State University, Long Beach,
+  its colleges, and its departments.
+- site/vendor/docx/ is the docx library by Dolan Miu, distributed under the MIT license
+  (see site/vendor/docx/LICENSE).

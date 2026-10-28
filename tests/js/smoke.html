@@ -1,0 +1,63 @@
+<!doctype html>
+<!-- Copyright (c) 2026 Ehsan Madadi. All rights reserved. -->
+<!-- Browser smoke test: builds a sample syllabus from the built data and generates a .docx.
+     Run with: python tests/run_browser_tests.py -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Smoke test</title></head>
+<body>
+<pre id="out">running</pre>
+<pre id="docx"></pre>
+<script src="../../dist/vendor/docx/docx.iife.js"></script>
+<script type="module">
+import { buildDocument, emptyDraft, countPlaceholders } from '../../dist/js/document.js';
+import { renderHtml } from '../../dist/js/render-html.js';
+import { buildDocx } from '../../dist/js/render-docx.js';
+
+const out = document.getElementById('out');
+const log = [];
+try {
+  const sems = await (await fetch('../../dist/data/semesters.json')).json();
+  const sem = sems.semesters[0];
+  const index = await (await fetch(`../../dist/data/${sem.id}/index.json`)).json();
+  const key = new URLSearchParams(location.search).get('key') || 'chhs.ccjem';
+  const { sections } = await (await fetch(`../../dist/data/${sem.id}/${key}.json`)).json();
+  const [cid, did] = key.split('.');
+  const college = index.colleges.find((c) => c.id === cid);
+  const department = did ? college.departments.find((d) => d.id === did) : null;
+
+  const draft = emptyDraft();
+  draft.course = { code: 'CRJU 101', title: 'Introduction to Criminal Justice', units: '3',
+    section: '01', classNumber: '1234', description: 'Sample description with a [link](https://www.csulb.edu).',
+    prerequisites: 'None', ge: '' };
+  draft.instructor = { name: 'Dr. Sample Instructor', email: 'sample@csulb.edu', phone: '',
+    office: 'ECS 600', officeHours: 'Wednesdays 1:00-2:00 pm', officeHoursWhere: 'ECS 600 or Zoom' };
+  draft.meetings = { times: 'MW 10:00-11:15 am', location: 'VEC 518' };
+  draft.modality = 'Face-to-Face Instruction';
+  draft.methods = ['Lecture', 'Class discussion'];
+  draft.slos = ['Explain the structure of the justice system.', 'Analyze **policy** outcomes.'];
+  draft.assessments = [{ name: 'Midterm', slo: 'SLO 1', weight: '30' }, { name: 'Final', slo: 'SLO 1, 2', weight: '30' },
+    { name: 'Papers', slo: 'SLO 2', weight: '40' }];
+  draft.schedule = [{ week: '1', date: 'Jan 25', topic: 'Introduction', work: 'Read syllabus', due: '' }];
+  draft.sections['ai-policy'] = { text: 'AI use is allowed for brainstorming only.\n- Cite any use.' };
+  draft.custom = [{ id: 'x1', title: 'Field Trip', text: 'We visit a court.', after: 'schedule' }];
+
+  const doc = buildDocument({ semester: sem, college, department, sections, draft });
+  const html = renderHtml(doc);
+  log.push(`title=${doc.title}`);
+  log.push(`blocks=${doc.blocks.length}`);
+  log.push(`h1=${doc.blocks.filter((b) => b.t === 'h' && b.level === 1).map((b) => b.runs[0].text).join(' | ')}`);
+  log.push(`placeholders=${countPlaceholders(doc)}`);
+  log.push(`htmlLength=${html.length}`);
+  log.push(`hasMission=${html.includes('ethical leaders')}`);
+  log.push(`hasCustom=${html.includes('Field Trip')}`);
+  const b64 = await docx.Packer.toBase64String(buildDocx(docx, doc));
+  document.getElementById('docx').textContent = b64;
+  log.push(`docxBase64Length=${b64.length}`);
+  log.push('OK');
+} catch (e) {
+  log.push(`ERROR ${e && e.stack || e}`);
+}
+out.textContent = log.join('\n');
+</script>
+</body>
+</html>

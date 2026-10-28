@@ -1,0 +1,60 @@
+# Copyright (c) 2026 Ehsan Madadi. All rights reserved.
+# Refreshes catalog/courses.csv from the Acalog API once a month (and on demand) and opens
+# a pull request when courses changed. Needs the repository secret ACALOG_API_KEY and the
+# repository variable ACALOG_CATALOG_ID (for example 12 for the 2026-2027 catalog).
+name: Update course catalog
+
+on:
+  schedule:
+    - cron: "0 9 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    env:
+      ACALOG_API_KEY: ${{ secrets.ACALOG_API_KEY }}
+      ACALOG_CATALOG_ID: ${{ vars.ACALOG_CATALOG_ID }}
+      ACALOG_CATALOG_NAME: ${{ vars.ACALOG_CATALOG_NAME }}
+    steps:
+      - name: Skip when no API key is configured
+        if: env.ACALOG_API_KEY == '' || env.ACALOG_CATALOG_ID == ''
+        run: echo "::notice::Set the ACALOG_API_KEY secret and ACALOG_CATALOG_ID variable to enable catalog updates."
+
+      - uses: actions/checkout@v4
+        if: env.ACALOG_API_KEY != '' && env.ACALOG_CATALOG_ID != ''
+
+      - uses: actions/setup-python@v5
+        if: env.ACALOG_API_KEY != '' && env.ACALOG_CATALOG_ID != ''
+        with:
+          python-version: "3.12"
+
+      - name: Download courses
+        if: env.ACALOG_API_KEY != '' && env.ACALOG_CATALOG_ID != ''
+        run: |
+          python scripts/catalog_acalog.py --catalog-id "$ACALOG_CATALOG_ID" --catalog-name "$ACALOG_CATALOG_NAME"
+          python scripts/build.py --check
+
+      - name: Open a pull request if anything changed
+        if: env.ACALOG_API_KEY != '' && env.ACALOG_CATALOG_ID != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- catalog/courses.csv; then
+            echo "Catalog unchanged."
+            exit 0
+          fi
+          branch="catalog/$(date +%Y-%m-%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add catalog/
+          git commit -m "Update course catalog $(date +%Y-%m-%d)"
+          git push -u origin "$branch"
+          gh pr create --base main --head "$branch" \
+            --title "Update course catalog $(date +%Y-%m-%d)" \
+            --body "Monthly refresh of catalog/courses.csv from the Acalog API."

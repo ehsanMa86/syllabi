@@ -1,0 +1,29 @@
+# Copyright (c) 2026 Ehsan Madadi. All rights reserved.
+# Who must approve changes to each part of the syllabus content.
+# With branch protection on main ("Require review from Code Owners"), a change to a
+# college's folder cannot be merged until that college's owner approves it.
+#
+# Replace the example handles with real GitHub usernames or teams, then remove the "#".
+# The last matching line wins, so keep the general rules first.
+
+# Site code, scripts and workflows
+# *                                         @YOUR-GITHUB-USERNAME
+
+# University layer (Faculty Affairs / Academic Senate designee)
+# /content/*/university/                    @YOUR-ORG/faculty-affairs
+# /content/*/_semester.md                   @YOUR-ORG/faculty-affairs
+
+# Colleges
+# /content/*/colleges/ced/                  @YOUR-ORG/ced-syllabus
+# /content/*/colleges/chhs/                 @YOUR-ORG/chhs-syllabus
+# /content/*/colleges/cla/                  @YOUR-ORG/cla-syllabus
+# /content/*/colleges/cnsm/                 @YOUR-ORG/cnsm-syllabus
+# /content/*/colleges/cob/                  @YOUR-ORG/cob-syllabus
+# /content/*/colleges/coe/                  @YOUR-ORG/coe-syllabus
+# /content/*/colleges/cota/                 @YOUR-ORG/cota-syllabus
+
+# Departments and schools can have their own owners too
+# /content/*/colleges/chhs/departments/ccjem/   @YOUR-ORG/ccjem
+
+# Course catalog
+# /catalog/                                 @YOUR-GITHUB-USERNAME

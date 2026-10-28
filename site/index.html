@@ -1,0 +1,75 @@
+<!doctype html>
+<!-- Copyright (c) 2026 Ehsan Madadi. All rights reserved. See LICENSE in the project root. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CSULB Syllabus Builder</title>
+  <meta name="description" content="Build a CSULB course syllabus with the current university and college policy statements, then download it as an editable Word file or an accessible PDF.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111'/%3E%3Cpath d='M9 8h11l4 4v12H9z' fill='%23f2b705'/%3E%3Cpath d='M12 15h9M12 19h9M12 23h6' stroke='%23111' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <a class="skip" href="#setup">Skip to the form</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div>
+        <strong>Syllabus Builder</strong>
+        <span>California State University, Long Beach</span>
+      </div>
+    </div>
+    <nav class="actions" aria-label="Syllabus actions">
+      <button type="button" id="check-count" class="pill" title="Show the checklist">Checklist</button>
+      <button type="button" id="btn-docx" class="primary">Download Word</button>
+      <button type="button" id="btn-pdf">Save as PDF</button>
+      <details class="menu">
+        <summary>Draft</summary>
+        <div class="menu-panel">
+          <button type="button" id="btn-save">Save draft file</button>
+          <label class="file-btn">Open draft file<input type="file" id="file-open" accept=".json,application/json"></label>
+          <button type="button" id="btn-reset" class="danger">Start over</button>
+        </div>
+      </details>
+    </nav>
+  </header>
+
+  <div class="pane-switch" role="group" aria-label="View">
+    <button type="button" data-show="edit">Edit</button>
+    <button type="button" data-show="preview">Preview</button>
+  </div>
+
+  <main class="layout">
+    <div class="form-pane" id="form">
+      <section class="card setup" id="setup" aria-labelledby="setup-title">
+        <p class="empty">Loading…</p>
+      </section>
+      <div id="form-sections"></div>
+      <section class="card checklist" id="checklist" aria-live="polite"></section>
+      <footer class="credits">
+        <p>Policy text is maintained by the university and each college for every semester. Your entries are saved only in this browser.</p>
+        <p>&copy; 2026 Ehsan Madadi</p>
+      </footer>
+    </div>
+
+    <div class="preview-pane" aria-label="Syllabus preview">
+      <article class="paper" id="preview"></article>
+    </div>
+  </main>
+
+  <div id="status" class="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="pdf-dialog" aria-labelledby="pdf-title">
+    <h2 id="pdf-title">Saving as PDF</h2>
+    <p>Your browser's print window opens next. Choose <strong>Save as PDF</strong> as the destination (it may be listed under "Printer" or "Destination").</p>
+    <p>Chrome and Edge create a tagged, accessible PDF. For other browsers, download the Word file and use <strong>File &rarr; Save As &rarr; PDF</strong> in Word instead.</p>
+    <div class="dialog-actions">
+      <button type="button" id="pdf-cancel">Cancel</button>
+      <button type="button" id="pdf-continue" class="primary">Continue</button>
+    </div>
+  </dialog>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

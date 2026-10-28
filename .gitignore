@@ -1,0 +1,16 @@
+# Build output
+dist/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Source documents kept in the project root (college templates, sample syllabi).
+# They are not needed by the site; remove these lines if you want them in the repository.
+/*.docx
+/*.pdf
