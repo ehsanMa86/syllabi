@@ -10,9 +10,9 @@
 # Site code, scripts and workflows
 # *                                         @YOUR-GITHUB-USERNAME
 
-# University layer (Faculty Affairs / Academic Senate designee)
-# /content/*/university/                    @YOUR-ORG/faculty-affairs
-# /content/*/_semester.md                   @YOUR-ORG/faculty-affairs
+# Common layer: sections every syllabus has
+# /content/*/common/                        @YOUR-ORG/syllabus-committee
+# /content/*/_semester.md                   @YOUR-ORG/syllabus-committee
 
 # Colleges
 # /content/*/colleges/ced/                  @YOUR-ORG/ced-syllabus

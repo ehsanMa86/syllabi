@@ -1,6 +1,6 @@
 # CSULB Syllabus Builder
 
-A website where CSULB faculty build a course syllabus from the current university, college and department policy statements, add their own course details, and download it as an editable **Word (.docx)** file or an accessible **PDF**.
+A website where CSULB faculty build a course syllabus from their college's and department's current policy statements, add their own course details, and download it as an editable **Word (.docx)** file or an accessible **PDF**.
 
 It runs entirely on GitHub Pages. There is no server and no database, and nothing a faculty member types leaves their browser.
 
@@ -9,16 +9,16 @@ It runs entirely on GitHub Pages. There is no server and no database, and nothin
 ```
 content/2027-spring/
   _semester.md                  semester label and notes for faculty
-  university/                   CSULB Syllabus Template: every syllabus gets these sections
-  colleges/ced/                 College of Education additions and replacements
-  colleges/chhs/departments/ccjem/   school-level additions (optional)
+  common/                       sections every syllabus has (course details the instructor fills in)
+  colleges/ced/                 College of Education statements, from its syllabus template
+  colleges/chhs/departments/ccjem/   department or school statements (optional)
   colleges/cob/ ...
 catalog/courses.csv             course titles, units, descriptions (for "Look up in catalog")
 site/                           the web app (HTML, CSS, JavaScript)
 scripts/build.py                checks the content and builds the site into dist/
 ```
 
-1. **Layers.** The university layer defines every section and its order. A college layer can replace a section, append to it, remove it, or add a new one before or after any section. A department layer applies on top of its college in the same way. The build checks every layer and produces one merged section list for each college and department.
+1. **Layers.** The common layer defines the sections every syllabus has and their order: course information, outcomes, assessments, grading, schedule, and fill-in slots for policies such as academic integrity and attendance. Each college layer adds its own statements in its own wording, taken from that college's syllabus template; it can replace a section, append to it, remove it, or add a new one before or after any section. A department layer applies on top of its college in the same way. There is no official university-wide syllabus template yet; if one is adopted, it belongs in the common layer. The build checks every layer and produces one merged section list for each college and department.
 2. **Faculty form.** The site shows one card per section, in syllabus order. Each card says whether its text is required as written, editable, optional, or for the instructor to complete. A live preview and a checklist (PS 12-03 weights, office hours, SLOs, and so on) update as the instructor types.
 3. **Output.**
    - **Word:** the .docx is built in the browser with real heading styles, Word lists, repeating table header rows and document properties, so it passes Word's accessibility checker.
@@ -28,10 +28,14 @@ scripts/build.py                checks the content and builds the site into dist
 ## Every semester
 
 1. In **Actions → Start a new semester → Run workflow**, enter the new folder name (for example `2027-fall`). The workflow copies the latest semester and opens a pull request.
-2. The university and each college edit their own files on that pull request's branch, directly on github.com. [content/README.md](content/README.md) is the editing guide.
+2. Each college and department edits its own files on that pull request's branch, directly on github.com. [content/README.md](content/README.md) is the editing guide.
 3. Each folder's owner approves the changes (see [.github/CODEOWNERS](.github/CODEOWNERS)). Merging publishes the new semester; it becomes the default, and older semesters stay available.
 
 Faculty see a list of policy changes since the previous semester for their college.
+
+## Departments
+
+Any college can have departments or schools with their own statements. Run **Actions → Add a department** (or `python scripts/new_department.py`) with the college, a folder name, the full name and the course prefixes. That creates `content/<semester>/colleges/<college>/departments/<name>/` through a pull request. The department's section files go in that folder and work like the college's. Faculty pick the department from the **Department or school** menu, or it is chosen automatically from the course prefix.
 
 ## Course catalog
 
@@ -67,6 +71,7 @@ python -m unittest discover -s tests -v     # unit tests
 pip install python-docx pymupdf
 python tests/run_browser_tests.py           # headless Chrome/Edge: preview, Word and PDF output
 python scripts/new_semester.py 2027-fall    # same as the rollover workflow
+python scripts/new_department.py coe mae --name "Mechanical and Aerospace Engineering" --prefixes MAE
 ```
 
 ## Third-party code

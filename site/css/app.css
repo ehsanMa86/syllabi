@@ -277,3 +277,4 @@ details.provided summary { cursor: pointer; font-weight: 600; font-size: 14px; c
   .paper { box-shadow: none; padding: 0; max-width: none; }
   .paper a { color: #0b5394; }
 }
+#dept-hint { margin: -8px 0 12px; }

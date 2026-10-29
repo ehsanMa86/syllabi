@@ -1,6 +1,7 @@
 ---
 action: replace
 title: Plagiarism/Academic Integrity Policy
+field: none
 lock: personalize
 source: COB template 2026-27
 ---

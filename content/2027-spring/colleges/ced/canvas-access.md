@@ -1,6 +1,6 @@
 ---
-action: replace
 title: "Course Access: How do I access this course?"
+after: technology
 lock: personalize
 source: CED template 2026-27
 ---

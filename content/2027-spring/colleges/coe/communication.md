@@ -1,6 +1,7 @@
 ---
 action: replace
 title: Course Communication
+field: none
 lock: personalize
 source: COE syllabus template (ENGR 102, Spring 2024)
 ---

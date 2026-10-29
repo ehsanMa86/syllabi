@@ -101,7 +101,7 @@ const FIELD_RENDERERS = {
     const own = instructorText(s, d);
     const blocks = md(s.body);
     if (has(own)) blocks.push(...md(own));
-    // When the university or college already supplies text, the instructor's addition is optional.
+    // When the college or department already supplies text, the instructor's addition is optional.
     else if (!has(s.body)) blocks.push(para(ph(`Add: ${s.title.split(':')[0]}`)));
     return blocks;
   },

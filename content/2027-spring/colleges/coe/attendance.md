@@ -1,6 +1,7 @@
 ---
 action: replace
 title: Attendance and Participation Policy
+field: none
 lock: personalize
 prompt: Replace X% with the grade impact of unexcused absences in your course, or edit the statement to match your policy (PS 17-17).
 source: COE syllabus template (ENGR 102, Spring 2024); the course's own penalty (5%) replaced with X%

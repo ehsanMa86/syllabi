@@ -1,5 +1,6 @@
 ---
 action: replace
+field: none
 lock: personalize
 prompt: You may add classroom rules after the college statement.
 source: COB template 2026-27

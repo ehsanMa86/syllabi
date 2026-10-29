@@ -1,8 +1,7 @@
 ---
 title: Accessibility of Course Technology
-order: 715
-protected: yes
-source: CSULB Syllabus Template 10.27.26 (Important Campus Websites)
+after: accommodation
+source: CHHS template F2026 (policies listed under its accommodation statement)
 ---
 Please note the following policies and services:
 

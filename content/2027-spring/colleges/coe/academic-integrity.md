@@ -1,6 +1,7 @@
 ---
 action: replace
 title: Plagiarism/Academic Integrity Policy
+field: none
 lock: personalize
 source: COE syllabus template (ENGR 102, Spring 2024); old 2020 catalog link replaced with PS 21-01
 ---

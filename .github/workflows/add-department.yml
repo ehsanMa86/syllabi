@@ -1,0 +1,69 @@
+# Copyright (c) 2026 Ehsan Madadi
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Run from the Actions tab: adds a department or school under a college and opens a pull
+# request. The department's own statements are then added as files in its new folder.
+name: Add a department
+
+on:
+  workflow_dispatch:
+    inputs:
+      college:
+        description: "College"
+        required: true
+        type: choice
+        options: [ced, chhs, cla, cnsm, cob, coe, cota]
+      department:
+        description: "Folder name: lowercase letters, digits and hyphens (e.g. mae)"
+        required: true
+      name:
+        description: "Full name (e.g. Mechanical and Aerospace Engineering)"
+        required: true
+      short:
+        description: "Abbreviation (e.g. MAE)"
+        required: false
+      prefixes:
+        description: "Course prefixes, comma separated (e.g. MAE, ME)"
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Create the department
+        env:
+          COLLEGE: ${{ inputs.college }}
+          DEPARTMENT: ${{ inputs.department }}
+          NAME: ${{ inputs.name }}
+          SHORT: ${{ inputs.short }}
+          PREFIXES: ${{ inputs.prefixes }}
+        run: |
+          python scripts/new_department.py "$COLLEGE" "$DEPARTMENT" --name "$NAME" --short "$SHORT" --prefixes "$PREFIXES"
+          python scripts/build.py --check
+
+      - name: Open a pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COLLEGE: ${{ inputs.college }}
+          DEPARTMENT: ${{ inputs.department }}
+          NAME: ${{ inputs.name }}
+        run: |
+          branch="department/$COLLEGE-$DEPARTMENT"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add content/
+          git commit -m "Add department: $NAME"
+          git push -u origin "$branch"
+          gh pr create --base main --head "$branch" \
+            --title "Add department: $NAME" \
+            --body "Adds $NAME under $COLLEGE. Add the department's own statements as section files in its new folder on this branch (see content/README.md) before merging."

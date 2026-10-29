@@ -8,7 +8,7 @@
 Content lives in content/<year>-<term>/ (e.g. content/2027-spring/):
 
     _semester.md                         semester label and notes for faculty
-    university/<section>.md              university layer (every section has an order)
+    common/<section>.md                  common layer: sections every syllabus has (each has an order)
     colleges/<college>/_college.md       college name
     colleges/<college>/<section>.md      college additions and overrides
     colleges/<college>/departments/<dept>/_department.md
@@ -150,7 +150,7 @@ class Section:
 
 
 def validate_section_meta(path: Path, meta: dict[str, str], body: str, report: Report,
-                          university: bool) -> None:
+                          common: bool) -> None:
     for key in meta:
         if key not in SECTION_KEYS:
             report.error(path, f"unknown key '{key}' (allowed: {', '.join(sorted(SECTION_KEYS))})")
@@ -167,27 +167,27 @@ def validate_section_meta(path: Path, meta: dict[str, str], body: str, report: R
             report.warn(path, "start only has an effect on sections with lock: optional")
     if "action" in meta and meta["action"] not in ACTIONS:
         report.error(path, f"action must be one of {sorted(ACTIONS)}")
-    if university:
+    if common:
         for key in ("action", "before", "after"):
             if key in meta:
                 report.error(path, f"'{key}' is only used in college and department files")
         if "order" not in meta:
-            report.error(path, "university sections need an 'order' number")
+            report.error(path, "common sections need an 'order' number")
         elif not re.fullmatch(r"\d+", meta["order"]):
             report.error(path, "order must be a whole number")
         if not meta.get("title"):
             report.error(path, "missing title")
     else:
         if "order" in meta:
-            report.error(path, "'order' is only used in the university layer; use before: or after:")
+            report.error(path, "'order' is only used in the common layer; use before: or after:")
         if "protected" in meta:
-            report.error(path, "'protected' can only be set in the university layer")
+            report.error(path, "'protected' can only be set in the common layer")
         if "before" in meta and "after" in meta:
             report.error(path, "use either before: or after:, not both")
     check_links(path, body, report)
 
 
-def load_sections(folder: Path, report: Report, university: bool) -> list[Section]:
+def load_sections(folder: Path, report: Report, common: bool) -> list[Section]:
     sections = []
     for path in sorted(folder.glob("*.md")):
         if path.name.startswith("_"):
@@ -201,7 +201,7 @@ def load_sections(folder: Path, report: Report, university: bool) -> list[Sectio
         except ContentError as e:
             report.error(path, str(e))
             continue
-        validate_section_meta(path, meta, body, report, university)
+        validate_section_meta(path, meta, body, report, common)
         sections.append(Section(sid, meta, body, path))
     return sections
 
@@ -239,7 +239,7 @@ def merge(base: list[Section], overlay: list[Section], layer: str, report: Repor
             report.error(ov.path, "headings can only be replaced (to retitle them)")
             continue
         if is_yes(target.meta.get("protected")) and action in {"replace", "remove"}:
-            report.error(ov.path, f"'{ov.id}' is protected by the university layer; "
+            report.error(ov.path, f"'{ov.id}' is protected by the common layer; "
                                   "it can only be appended to")
             continue
         if action == "remove":
@@ -302,7 +302,7 @@ class Semester:
     label: str
     notes: str
     path: Path
-    university: list[Section]
+    common: list[Section]
     colleges: list[College]
 
     @property
@@ -332,18 +332,18 @@ def load_semester(folder: Path, report: Report) -> Semester:
     year, term = SEMESTER_RE.match(folder.name).groups()
     label = meta.get("label") or f"{term.capitalize()} {year}"
 
-    uni_dir = folder / "university"
-    university = load_sections(uni_dir, report, university=True) if uni_dir.is_dir() else []
-    if not university:
-        report.error(folder, "no university sections found")
-    university.sort(key=lambda s: int(s.meta.get("order", "0") or 0))
+    common_dir = folder / "common"
+    common = load_sections(common_dir, report, common=True) if common_dir.is_dir() else []
+    if not common:
+        report.error(folder, "no common sections found")
+    common.sort(key=lambda s: int(s.meta.get("order", "0") or 0))
     seen_orders: dict[str, str] = {}
-    for s in university:
+    for s in common:
         o = s.meta.get("order")
         if o in seen_orders:
             report.error(s.path, f"order {o} is also used by '{seen_orders[o]}'")
         seen_orders[o] = s.id
-        s.layers = ["University"]
+        s.layers = ["Common"]
 
     colleges = []
     col_root = folder / "colleges"
@@ -363,12 +363,12 @@ def load_semester(folder: Path, report: Report) -> Semester:
             if not dmeta.get("name"):
                 report.error(ddir / "_department.md", "missing name")
             departments.append(Department(ddir.name, dmeta, dnotes,
-                                          load_sections(ddir, report, university=False)))
+                                          load_sections(ddir, report, common=False)))
         colleges.append(College(cdir.name, cmeta, cnotes,
-                                load_sections(cdir, report, university=False), departments))
+                                load_sections(cdir, report, common=False), departments))
     if not colleges:
         report.error(folder, "no colleges found")
-    return Semester(folder.name, label, notes, folder, university, colleges)
+    return Semester(folder.name, label, notes, folder, common, colleges)
 
 
 def load_all(report: Report) -> list[Semester]:
@@ -388,7 +388,7 @@ def combinations(sem: Semester, report: Report):
     """Yield (key, college, department, merged sections) for every selectable option."""
     for col in sem.colleges:
         short = col.meta.get("short") or col.id.upper()
-        merged = merge(sem.university, col.sections, short, report)
+        merged = merge(sem.common, col.sections, short, report)
         yield col.id, col, None, merged
         for dep in col.departments:
             dshort = dep.meta.get("short") or dep.id.upper()
@@ -406,7 +406,7 @@ def layer_files(sem: Semester) -> dict[tuple[str, str, str], tuple[str, str]]:
             text = json.dumps(s.meta, sort_keys=True) + "\n" + s.body
             out[(col, dep, s.id)] = (s.meta.get("title", ""), text)
 
-    add("", "", sem.university)
+    add("", "", sem.common)
     for c in sem.colleges:
         add(c.id, "", c.sections)
         for d in c.departments:
@@ -416,7 +416,7 @@ def layer_files(sem: Semester) -> dict[tuple[str, str, str], tuple[str, str]]:
 
 def changes_between(prev: Semester, cur: Semester) -> list[dict]:
     a, b = layer_files(prev), layer_files(cur)
-    titles = {s.id: s.meta.get("title", s.id) for s in cur.university + prev.university}
+    titles = {s.id: s.meta.get("title", s.id) for s in cur.common + prev.common}
     changes = []
     for key in sorted(set(a) | set(b)):
         if key in a and key in b and a[key][1] == b[key][1]:

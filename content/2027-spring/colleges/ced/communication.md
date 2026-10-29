@@ -1,6 +1,7 @@
 ---
 action: replace
 title: "Course Communication: What should I expect each week and within the semester?"
+field: none
 lock: personalize
 source: CED template 2026-27
 ---

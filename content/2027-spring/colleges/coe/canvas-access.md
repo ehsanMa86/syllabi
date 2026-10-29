@@ -1,6 +1,6 @@
 ---
-action: replace
 title: Canvas Access
+after: technology
 lock: personalize
 source: COE syllabus template (ENGR 102, Spring 2024); the retired BeachBoard (desire2learn) login link was removed
 ---

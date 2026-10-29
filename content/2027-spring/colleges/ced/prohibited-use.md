@@ -1,6 +1,6 @@
 ---
-action: replace
 title: "Unauthorized Recording(s): How do we protect the confidentiality and privacy of our classroom community?"
+after: ced-professional-conduct
 lock: personalize
 source: CED template 2026-27
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Campus Resources and Student Support: What resources are available to support me?"
-after: student-resources
+after: anti-blackness
 lock: optional
 prompt: Optional section; add your program's contact links.
 source: CED template 2026-27

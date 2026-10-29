@@ -1,7 +1,7 @@
 ---
-action: replace
 title: Additional Information
-source: COB template 2026-27 (links added for items that had none, using the university template URLs)
+after: accommodation
+source: COB template 2026-27 (links added for items that had none, using current csulb.edu addresses)
 ---
 - [Student Center](https://www.csulb.edu/enrollment-services/mycsulb-student-center)
 - [The Learning Center](https://www.csulb.edu/academic-affairs/undergraduate-studies/the-learning-center) (Academic Coaching)

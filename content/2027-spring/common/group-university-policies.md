@@ -1,5 +1,5 @@
 ---
-kind: heading
+title: Campus Policies and Student Support
 order: 700
-title: University Policy Statements
+kind: heading
 ---

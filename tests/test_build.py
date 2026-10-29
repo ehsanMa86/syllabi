@@ -30,10 +30,10 @@ class TempContent(unittest.TestCase):
     def semester(self, name="2027-spring"):
         folder = self.root / name
         write(folder, "_semester.md", "---\nlabel: Test Term\n---\nNotes.\n")
-        write(folder, "university/group-a.md", "---\nkind: heading\norder: 10\ntitle: Group A\n---\n")
-        write(folder, "university/alpha.md", "---\ntitle: Alpha\norder: 20\n---\nAlpha text.\n")
-        write(folder, "university/beta.md", "---\ntitle: Beta\norder: 30\nprotected: yes\n---\nBeta text.\n")
-        write(folder, "university/gamma.md", "---\ntitle: Gamma\norder: 40\nfield: text\n---\n")
+        write(folder, "common/group-a.md", "---\nkind: heading\norder: 10\ntitle: Group A\n---\n")
+        write(folder, "common/alpha.md", "---\ntitle: Alpha\norder: 20\n---\nAlpha text.\n")
+        write(folder, "common/beta.md", "---\ntitle: Beta\norder: 30\nprotected: yes\n---\nBeta text.\n")
+        write(folder, "common/gamma.md", "---\ntitle: Gamma\norder: 40\nfield: text\n---\n")
         write(folder, "colleges/abc/_college.md", "---\nname: College of ABC\nshort: ABC\n---\n")
         return folder
 
@@ -62,13 +62,13 @@ class ParseTests(TempContent):
 
     def test_unknown_key_is_an_error(self):
         folder = self.semester()
-        write(folder, "university/delta.md", "---\ntitle: Delta\norder: 50\ncolour: red\n---\n")
+        write(folder, "common/delta.md", "---\ntitle: Delta\norder: 50\ncolour: red\n---\n")
         _, report = self.load(folder)
         self.assertTrue(any("unknown key 'colour'" in e for e in report.errors))
 
     def test_bad_link_is_an_error(self):
         folder = self.semester()
-        write(folder, "university/delta.md", "---\ntitle: Delta\norder: 50\n---\nSee [site](www.example.com).\n")
+        write(folder, "common/delta.md", "---\ntitle: Delta\norder: 50\n---\nSee [site](www.example.com).\n")
         _, report = self.load(folder)
         self.assertTrue(any("must start with https://" in e for e in report.errors))
 
@@ -77,7 +77,7 @@ class MergeTests(TempContent):
     def ids(self, sections):
         return [s.id for s in sections]
 
-    def test_college_without_files_gets_university_layer(self):
+    def test_college_without_files_gets_common_layer(self):
         merged, report = self.merged(self.semester())
         self.assertEqual(report.errors, [])
         self.assertEqual(self.ids(merged), ["group-a", "alpha", "beta", "gamma"])
@@ -91,7 +91,7 @@ class MergeTests(TempContent):
         self.assertEqual(alpha.body, "ABC alpha.")
         self.assertEqual(alpha.meta["title"], "Alpha")
         self.assertEqual(alpha.meta["lock"], "personalize")
-        self.assertEqual(alpha.layers, ["University", "ABC"])
+        self.assertEqual(alpha.layers, ["Common", "ABC"])
 
     def test_append_and_retitle(self):
         folder = self.semester()
@@ -123,7 +123,7 @@ class MergeTests(TempContent):
         merged, report = self.merged(folder, "abc.xyz")
         self.assertEqual(report.errors, [])
         self.assertEqual(merged[1].body, "College.\n\nDept.")
-        self.assertEqual(merged[1].layers, ["University", "ABC", "XYZ"])
+        self.assertEqual(merged[1].layers, ["Common", "ABC", "XYZ"])
 
     def test_existing_section_needs_action(self):
         folder = self.semester()
@@ -168,9 +168,9 @@ class ChangeTests(TempContent):
     def test_changes_between_semesters(self):
         a = self.semester("2027-spring")
         b = self.semester("2027-fall")
-        write(b, "university/alpha.md", "---\ntitle: Alpha\norder: 20\n---\nAlpha text, revised.\n")
+        write(b, "common/alpha.md", "---\ntitle: Alpha\norder: 20\n---\nAlpha text, revised.\n")
         write(b, "colleges/abc/extra.md", "---\ntitle: Extra\nafter: alpha\n---\nNew.\n")
-        (b / "university/gamma.md").unlink()
+        (b / "common/gamma.md").unlink()
         sa, _ = self.load(a)
         sb, _ = self.load(b)
         changes = {(c["section"], c["change"]) for c in build.changes_between(sa, sb)}

@@ -1,6 +1,7 @@
 ---
 action: replace
 title: "Attendance and Participation: What are the expectations for attendance and participation?"
+field: none
 lock: personalize
 prompt: Edit for your modality (in person, hybrid, synchronous, asynchronous) and replace X% with your participation weight. See PS 17-17.
 source: CED template 2026-27

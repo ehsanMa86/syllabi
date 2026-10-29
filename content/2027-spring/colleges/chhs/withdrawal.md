@@ -1,5 +1,7 @@
 ---
 action: replace
+title: Withdrawal Policy
+field: none
 source: CHHS template F2026
 ---
 Regulations governing the refund of student fees in the California State University system are prescribed by the CSU Board of Trustees; see California Code of Regulations, Title 5, Education, § 41802.

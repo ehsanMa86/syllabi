@@ -10,7 +10,7 @@ import { runsHtml } from './render-html.js';
 import { isIncluded, labeledItems, sumWeights, DEFAULT_GRADING } from './document.js';
 
 const LOCK_LABELS = {
-  required: ['Required text', 'Provided by the university or college. It is included as written.'],
+  required: ['Required text', 'Provided by your college or department. It is included as written.'],
   personalize: ['Editable', 'Starts with the provided text. You may personalize it.'],
   optional: ['Optional', 'You choose whether to include it, and you may edit it.'],
 };

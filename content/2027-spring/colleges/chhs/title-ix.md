@@ -1,6 +1,6 @@
 ---
 title: Sexual Assault, Rape, Dating/Domestic Violence, and Stalking
-order: 760
+after: withdrawal
 source: CHHS template F2026
 ---
 Title IX prohibits gender discrimination, including sexual harassment and sexual misconduct. If you have experienced sexual harassment, sexual assault, rape, dating/domestic violence, or stalking, the campus confidential Victim's Advocate is available to help. Jaqueline Urtez (email: [advocate@csulb.edu](mailto:advocate@csulb.edu), phone: (562) 985-2668) can provide **free** and **confidential** support, accommodations, and referrals for victims without having to report the assault to campus authorities. While students are welcome to discuss assaults with faculty, both faculty and teaching assistants are mandatory reporters who are required to report all incidents of sexual harassment/misconduct to the Title IX office for follow-up and possible investigation. Students who do wish to report the assault for possible investigation may contact the confidential victim's advocate, who can help them through the reporting process, or they can report the assault directly to the Title IX Office by completing an online reporting form at [https://www.csulb.edu/equity-diversity/title-ix](https://www.csulb.edu/equity-diversity/title-ix) or contacting the Office of Equity & Diversity at [OED@csulb.edu](mailto:OED@csulb.edu).

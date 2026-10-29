@@ -216,10 +216,16 @@ function renderSetup() {
         reload();
       }, { required: true }),
     ),
-    college && college.departments.length
-      ? select('Department or school', [['', 'Not listed / none'], ...college.departments.map((x) => [x.id, x.name])],
-        d.department, (v) => { d.department = v; changed(); reload(); })
+    college
+      ? select('Department or school',
+        [['', college.departments.length ? 'Not listed / none' : 'No departments added yet'],
+          ...college.departments.map((x) => [x.id, x.name])],
+        d.department, (v) => { d.department = v; changed(); reload(); },
+        { disabled: !college.departments.length, 'aria-describedby': 'dept-hint' })
       : null,
+    college ? h('p', { class: 'hint', id: 'dept-hint' }, college.departments.length
+      ? 'Choose your department if it has its own statements. Departments not listed use the college text.'
+      : 'Departments can add their own statements to their college; until then the college text is used.') : null,
     h('div', { class: 'lookup' },
       h('div', { class: 'field' }, h('label', { for: 'in-code' }, 'Course'), codeInput),
       hasCatalog ? h('button', { type: 'button', onclick: doLookup }, 'Look up') : null,

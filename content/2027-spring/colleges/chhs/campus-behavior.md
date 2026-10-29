@@ -1,6 +1,6 @@
 ---
 title: Campus Behavior
-order: 730
+after: prohibited-use
 source: CHHS template F2026
 ---
 **CSULB Statement on Civility and Acts of Violence:** "California State University, Long Beach, takes pride in its tradition of maintaining a civil and non-violent learning, working, and social environment. Civility and mutual respect toward all members of the University community are intrinsic to the establishment of excellence in teaching and learning. They also contribute to the maintenance of a safe and productive workplace and overall healthy campus climate. The University espouses and practices zero tolerance for violence against any member of the University community (i.e., students, faculty, staff, administrators, and visitors). Violence and threats of violence not only disrupt the campus environment, they also negatively impact the University's ability to foster open dialogue and a free exchange of ideas among all campus constituencies."
